@@ -7,16 +7,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm install --production
       - name: Create data directory
         run: mkdir -p data
       - name: Zip artifact
-        run: zip -r release.zip . -x ".git/*" ".github/*" "*.md" "node_modules/*"
+        run: zip -r release.zip . -x ".git/*" ".github/*" "*.md"
       - name: Login to Azure
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Deploy
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: task-calendar-app
-          package: release.zip
+      - name: Configure and deploy
+        run: |
+          az webapp config appsettings set --name task-calendar-app --resource-group appsvc_linux_japanwest_basic --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false --output none
+          az webapp deploy --name task-calendar-app --resource-group appsvc_linux_japanwest_basic --src-path release.zip --type zip --clean true

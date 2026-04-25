@@ -1,0 +1,8 @@
+{
+  "name": "任务日历",
+  "short_name": "任务日历",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f4ff",
+  "theme_color": "#4F8EF7"
+}
